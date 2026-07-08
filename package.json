@@ -1,0 +1,62 @@
+{
+  "name": "gitstats",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Modern React dashboard for GitStats — beautiful git repository analytics",
+  "homepage": "https://hivarsoft.com",
+  "author": {
+    "name": "HivarSoft",
+    "url": "https://hivarsoft.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HivarSoft/gitstats"
+  },
+  "bugs": {
+    "url": "https://github.com/HivarSoft/gitstats/issues"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -n \"API,UI\" -c \"cyan,magenta\" \"npx tsx server/index.ts\" \"vite\"",
+    "dev:server": "tsx watch server/index.ts",
+    "dev:ui": "vite",
+    "build": "tsc && vite build",
+    "build:server": "tsc -p tsconfig.server.json",
+    "preview": "vite preview",
+    "start": "node dist-server/index.js",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@chakra-ui/icons": "^2.1.1",
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "framer-motion": "^11.1.9",
+    "lucide-react": "^0.378.0",
+    "multer": "^2.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.23.1",
+    "recharts": "^2.12.7"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/multer": "^2.2.0",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^10.0.3",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "tsx": "^4.23.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11"
+  }
+}
