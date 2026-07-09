@@ -60,3 +60,25 @@ export function gitPlumbingLines(gitDir: string, args: string[]): string[] {
   const out = gitPlumbing(gitDir, args)
   return out ? out.split('\n') : []
 }
+
+/** Return all local branch names for a repo, plus the current HEAD branch. */
+export function listBranches(gitDir: string): { branches: string[]; current: string } {
+  // branch names from refs/heads
+  const refs = gitPlumbingLines(gitDir, ['for-each-ref', '--format=%(refname:short)', 'refs/heads/'])
+    .filter(Boolean)
+
+  // resolve HEAD symbolically
+  let current = ''
+  try {
+    const sym = gitPlumbing(gitDir, ['symbolic-ref', '--short', 'HEAD']).trim()
+    current = sym
+  } catch {
+    // detached HEAD — use the short SHA
+    try { current = gitPlumbing(gitDir, ['rev-parse', '--short', 'HEAD']).trim() } catch { /* ignore */ }
+  }
+
+  // If HEAD points to a branch not in refs/heads (rare edge case), add it
+  if (current && !refs.includes(current)) refs.unshift(current)
+
+  return { branches: refs, current }
+}

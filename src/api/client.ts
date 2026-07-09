@@ -14,6 +14,11 @@ export interface ValidateResponse {
   error?: string
 }
 
+export interface BranchesResponse {
+  branches: string[]
+  current: string
+}
+
 export interface BrowseEntry {
   name: string
   path: string
@@ -55,9 +60,15 @@ export const api = {
       body: JSON.stringify({ repoPath }),
     }),
 
-  analyze: (repoPath: string) =>
-    fetchJSON<AnalyzeResponse>(`${BASE}/analyze`, {
+  branches: (repoPath: string) =>
+    fetchJSON<BranchesResponse>(`${BASE}/branches`, {
       method: 'POST',
       body: JSON.stringify({ repoPath }),
+    }),
+
+  analyze: (repoPath: string, branch?: string) =>
+    fetchJSON<AnalyzeResponse>(`${BASE}/analyze`, {
+      method: 'POST',
+      body: JSON.stringify({ repoPath, branch }),
     }),
 }

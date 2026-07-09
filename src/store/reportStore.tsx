@@ -16,6 +16,10 @@ export interface ReportState {
   projectName: string
   elapsed: number
   error: string | null
+  /** Available branches for the current repo */
+  branches: string[]
+  /** Currently selected branch (empty string = HEAD) */
+  branch: string
 }
 
 const initialState: ReportState = {
@@ -25,12 +29,16 @@ const initialState: ReportState = {
   projectName: '',
   elapsed: 0,
   error: null,
+  branches: [],
+  branch: '',
 }
 
 // ─── Actions ──────────────────────────────────────────────────────────────────
 
 export type Action =
   | { type: 'SET_PATH'; payload: string }
+  | { type: 'SET_BRANCHES'; payload: { branches: string[]; current: string } }
+  | { type: 'SET_BRANCH'; payload: string }
   | { type: 'START_VALIDATE' }
   | { type: 'START_ANALYZE'; payload: { projectName: string } }
   | { type: 'DONE'; payload: { report: GitStatsReport; elapsed: number } }
@@ -41,6 +49,14 @@ function reducer(state: ReportState, action: Action): ReportState {
   switch (action.type) {
     case 'SET_PATH':
       return { ...state, repoPath: action.payload, error: null }
+    case 'SET_BRANCHES':
+      return {
+        ...state,
+        branches: action.payload.branches,
+        branch: action.payload.current,
+      }
+    case 'SET_BRANCH':
+      return { ...state, branch: action.payload }
     case 'START_VALIDATE':
       return { ...state, status: 'validating', error: null }
     case 'START_ANALYZE':
