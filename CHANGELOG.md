@@ -11,6 +11,39 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [1.4.0] — 2026-07-10
+
+### Fixed
+- **Branch switching navigates away and gets stuck** — dispatching `START_ANALYZE` set `status` to `'analyzing'`, which caused `useReportData` to redirect every dashboard page to `/import`, unmounting the sidebar before the fetch completed
+  - `useReportData` now only redirects when `state.report` is `null`; pages stay mounted during a branch switch
+  - New `START_SWITCH` action sets status to `'switching'` while keeping the existing report in state, so the old data remains visible during reload
+  - `ERROR` reducer reverts to `'done'` (not `'error'`) when a report already exists, so a failed switch restores the previous view
+  - Fixed early-return guard in `BranchSelector`: normalises `state.branch` (empty string on first load) against `branches[0]` before comparing
+  - On error, branch label reverts via `SET_BRANCH` before `ERROR` is dispatched
+  - Removed local `useState` loading flag — `isSwitching` is now derived from the store
+
+---
+
+## [1.3.0] — 2026-07-10
+
+### Added
+- **Branch selector dropdown** in the left sidebar, visible once a repository is loaded
+  - Lists all local branches via a new `POST /api/branches` endpoint
+  - Current branch shown with a check icon and bold label; dropdown is disabled while switching
+  - Spinner replaces the chevron icon during a re-analysis
+  - Automatically navigates to Overview after a successful branch switch
+- `listBranches()` helper in `server/git.ts` using `for-each-ref refs/heads/` and `symbolic-ref HEAD`
+- `BranchesResponse` interface and `api.branches()` helper in `src/api/client.ts`
+- `branches[]` and `branch` fields added to `ReportState` in the store
+- `SET_BRANCHES` and `SET_BRANCH` action types in the store
+
+### Changed
+- `analyze()` in `server/analyzer.ts` accepts an optional `branch` param (default `HEAD`); validates the ref before running and passes it to all git commands (`log`, `ls-tree`, files timeline) instead of hardcoding `HEAD`
+- `POST /api/analyze` accepts an optional `branch` field in the request body
+- `useAnalyze` fetches branch list right after validation and stores it; passes the selected branch to `api.analyze()`
+
+---
+
 ## [1.2.0] — 2026-07-08
 
 ### Added
