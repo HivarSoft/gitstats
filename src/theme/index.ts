@@ -7,16 +7,16 @@ const config: ThemeConfig = {
 
 const colors = {
   brand: {
-    50: '#eef2ff',
-    100: '#e0e7ff',
-    200: '#c7d2fe',
-    300: '#a5b4fc',
-    400: '#818cf8',
-    500: '#6366f1',
-    600: '#4f46e5',
-    700: '#4338ca',
-    800: '#3730a3',
-    900: '#312e81',
+    50: '#fff1f3',
+    100: '#ffe4e8',
+    200: '#fecdd6',
+    300: '#fda4b4',
+    400: '#fb718a',
+    500: '#f43f5e',
+    600: '#DC143C', // Primary Crimson
+    700: '#be123c',
+    800: '#9f1239',
+    900: '#881337',
   },
   surface: {
     50: '#f8fafc',
@@ -74,7 +74,13 @@ const styles = {
     },
     '::-webkit-scrollbar': { width: '6px', height: '6px' },
     '::-webkit-scrollbar-track': { bg: 'transparent' },
-    '::-webkit-scrollbar-thumb': { bg: 'brand.600', borderRadius: 'full' },
+    '::-webkit-scrollbar-thumb': {
+      bg: 'gray.500',
+      borderRadius: 'full',
+    },
+    '::-webkit-scrollbar-thumb:hover': {
+      bg: 'gray.500',
+    },
   },
 }
 
@@ -91,12 +97,33 @@ const components = {
       },
     },
   },
+
   Button: {
-    defaultProps: { colorScheme: 'brand' },
+    defaultProps: {
+      colorScheme: 'brand',
+    },
+    variants: {
+      solid: {
+        bg: 'brand.600',
+        color: 'white',
+        _hover: {
+          bg: 'brand.700',
+        },
+        _active: {
+          bg: 'brand.800',
+        },
+      },
+    },
   },
+
   Badge: {
-    baseStyle: { borderRadius: 'md', px: 2, py: 0.5 },
+    baseStyle: {
+      borderRadius: 'md',
+      px: 2,
+      py: 0.5,
+    },
   },
+
   Table: {
     variants: {
       stats: {
@@ -118,19 +145,23 @@ const components = {
           fontSize: 'sm',
         },
         tr: {
-          _hover: { bg: 'bg.subtle' },
+          _hover: {
+            bg: 'bg.subtle',
+          },
           transition: 'background 0.15s',
         },
       },
     },
   },
+
   Tabs: {
     variants: {
       'soft-rounded': {
         tab: {
           _selected: {
-            bg: 'brand.500',
+            bg: 'brand.600',
             color: 'white',
+            boxShadow: 'sm',
           },
         },
       },
@@ -151,9 +182,11 @@ const theme = extendTheme({
   styles,
   components,
   fonts,
+
   shadows: {
-    outline: '0 0 0 3px rgba(99, 102, 241, 0.45)',
+    outline: '0 0 0 3px rgba(220, 20, 60, 0.35)',
   },
+
   radii: {
     xl: '12px',
     '2xl': '16px',

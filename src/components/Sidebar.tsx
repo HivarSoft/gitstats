@@ -79,7 +79,7 @@ function NavItem({
           borderLeftWidth="3px"
           borderColor={isActive ? 'brand.500' : 'transparent'}
         >
-          <Icon as={icon} boxSize={4.5} flexShrink={0} />
+          <Icon as={icon} boxSize={4} flexShrink={0} />
           <Text>{label}</Text>
         </Flex>
       </Box>
@@ -230,7 +230,7 @@ export default function Sidebar({ projectName, onNavClick }: SidebarProps) {
       aria-label="Main navigation"
     >
       {/* Logo / Project name */}
-      <Flex align="center" gap={2.5} px={4} py={5} borderBottomWidth="1px" borderColor={borderColor}>
+      <Flex align="center" gap={2.5} px={4} py={4}>
         <Flex
           w={8}
           h={8}
@@ -244,9 +244,6 @@ export default function Sidebar({ projectName, onNavClick }: SidebarProps) {
         </Flex>
         <Box minW={0}>
           <Text fontSize="xs" fontWeight="semibold" color="brand.500" letterSpacing="wider" textTransform="uppercase">
-            GitStats
-          </Text>
-          <Text fontSize="sm" fontWeight="semibold" color="text.primary" noOfLines={1} title={projectName}>
             {projectName}
           </Text>
         </Box>

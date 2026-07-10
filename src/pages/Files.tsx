@@ -63,10 +63,10 @@ export default function Files() {
         title="Files"
         description="Repository file structure and language breakdown"
         icon={FolderOpen}
-        mb={8}
+        mb={{ base: 4, md: 8 }}
       />
 
-      <SimpleGrid columns={{ base: 2, md: 3 }} spacing={4} mb={8}>
+      <SimpleGrid columns={{ base: 2, md: 3 }} spacing={{ base: 3, md: 4 }} mb={{ base: 4, md: 8 }}>
         <StatCard label="Total Files" value={d.totalFiles.toLocaleString()} icon={FileCode2} iconColor="amber.400" />
         <StatCard label="Total Lines" value={d.totalLOC.toLocaleString()} icon={Code2} iconColor="brand.400" />
         <StatCard
@@ -77,7 +77,7 @@ export default function Files() {
         />
       </SimpleGrid>
 
-      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6} mb={6}>
+      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 4, md: 6 }} mb={{ base: 4, md: 6 }}>
         {/* File count over time */}
         <SectionCard title="File Count over Time" description="Monthly growth">
           <ChartWrapper height={240}>
@@ -91,7 +91,13 @@ export default function Files() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke={gridLine} />
-                  <XAxis dataKey="date" tick={{ fontSize: 9 }} tickLine={false} axisLine={false} interval={Math.floor(d.filesTimeline.length / 6)} />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 9 }}
+                    tickLine={false}
+                    axisLine={false}
+                    interval={Math.floor(d.filesTimeline.length / 6)}
+                  />
                   <YAxis tick={{ fontSize: 10 }} tickLine={false} axisLine={false} width={36} />
                   <Tooltip content={<CustomTooltip />} />
                   <Area type="monotone" dataKey="files" stroke="#f59e0b" strokeWidth={2} fill="url(#filesGrad)" dot={false} />
@@ -133,65 +139,67 @@ export default function Files() {
 
       {/* Extensions table */}
       <SectionCard title="Extensions Breakdown">
-        <Box overflowX="auto">
-          <Table variant="stats" size="sm">
-            <Thead>
-              <Tr>
-                <Th>Extension</Th>
-                <Th isNumeric>Files</Th>
-                <Th isNumeric>Files %</Th>
-                <Th isNumeric>Lines</Th>
-                <Th isNumeric>Lines %</Th>
-                <Th isNumeric>Lines / File</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {d.extensions.map((ext, i) => (
-                <Tr key={ext.extension || '__none__'}>
-                  <Td>
-                    <Flex align="center" gap={2}>
-                      <Box w={2.5} h={2.5} borderRadius="sm" bg={CHART_COLORS[i % CHART_COLORS.length]} flexShrink={0} />
-                      <Badge variant="subtle" colorScheme="gray" fontFamily="mono" fontSize="xs">
-                        {ext.extension ? `.${ext.extension}` : '(none)'}
-                      </Badge>
-                    </Flex>
-                  </Td>
-                  <Td isNumeric fontWeight="semibold">{ext.files.toLocaleString()}</Td>
-                  <Td isNumeric>
-                    <Flex align="center" justify="flex-end" gap={2}>
-                      <Box w="60px" bg="bg.subtle" borderRadius="full" h="5px" overflow="hidden">
-                        <Box
-                          w={`${Math.min(ext.filesFrac, 100)}%`}
-                          h="full"
-                          bg={CHART_COLORS[i % CHART_COLORS.length]}
-                          borderRadius="full"
-                        />
-                      </Box>
-                      <Text>{ext.filesFrac.toFixed(1)}%</Text>
-                    </Flex>
-                  </Td>
-                  <Td isNumeric>{ext.lines > 0 ? ext.lines.toLocaleString() : '—'}</Td>
-                  <Td isNumeric>
-                    {ext.linesFrac > 0 ? (
+        <Box overflowX="auto" WebkitOverflowScrolling="touch">
+          <Box minW="480px">
+            <Table variant="stats" size="sm">
+              <Thead>
+                <Tr>
+                  <Th>Extension</Th>
+                  <Th isNumeric>Files</Th>
+                  <Th isNumeric>Files %</Th>
+                  <Th isNumeric>Lines</Th>
+                  <Th isNumeric>Lines %</Th>
+                  <Th isNumeric>Lines / File</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {d.extensions.map((ext, i) => (
+                  <Tr key={ext.extension || '__none__'}>
+                    <Td>
+                      <Flex align="center" gap={2}>
+                        <Box w={2.5} h={2.5} borderRadius="sm" bg={CHART_COLORS[i % CHART_COLORS.length]} flexShrink={0} />
+                        <Badge variant="subtle" colorScheme="gray" fontFamily="mono" fontSize="xs">
+                          {ext.extension ? `.${ext.extension}` : '(none)'}
+                        </Badge>
+                      </Flex>
+                    </Td>
+                    <Td isNumeric fontWeight="semibold">{ext.files.toLocaleString()}</Td>
+                    <Td isNumeric>
                       <Flex align="center" justify="flex-end" gap={2}>
-                        <Box w="60px" bg="bg.subtle" borderRadius="full" h="5px" overflow="hidden">
+                        <Box w="40px" bg="bg.subtle" borderRadius="full" h="5px" overflow="hidden">
                           <Box
-                            w={`${Math.min(ext.linesFrac, 100)}%`}
+                            w={`${Math.min(ext.filesFrac, 100)}%`}
                             h="full"
                             bg={CHART_COLORS[i % CHART_COLORS.length]}
                             borderRadius="full"
-                            opacity={0.7}
                           />
                         </Box>
-                        <Text>{ext.linesFrac.toFixed(1)}%</Text>
+                        <Text>{ext.filesFrac.toFixed(1)}%</Text>
                       </Flex>
-                    ) : '—'}
-                  </Td>
-                  <Td isNumeric>{ext.linesPerFile > 0 ? ext.linesPerFile : '—'}</Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
+                    </Td>
+                    <Td isNumeric>{ext.lines > 0 ? ext.lines.toLocaleString() : '—'}</Td>
+                    <Td isNumeric>
+                      {ext.linesFrac > 0 ? (
+                        <Flex align="center" justify="flex-end" gap={2}>
+                          <Box w="40px" bg="bg.subtle" borderRadius="full" h="5px" overflow="hidden">
+                            <Box
+                              w={`${Math.min(ext.linesFrac, 100)}%`}
+                              h="full"
+                              bg={CHART_COLORS[i % CHART_COLORS.length]}
+                              borderRadius="full"
+                              opacity={0.7}
+                            />
+                          </Box>
+                          <Text>{ext.linesFrac.toFixed(1)}%</Text>
+                        </Flex>
+                      ) : '—'}
+                    </Td>
+                    <Td isNumeric>{ext.linesPerFile > 0 ? ext.linesPerFile : '—'}</Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </Box>
         </Box>
       </SectionCard>
     </Box>

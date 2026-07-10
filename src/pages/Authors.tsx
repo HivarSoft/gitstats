@@ -66,11 +66,11 @@ export default function Authors() {
         title="Authors"
         description={`${d.totalAuthors} contributors · ${d.totalCommits.toLocaleString()} total commits`}
         icon={Users}
-        mb={8}
+        mb={{ base: 4, md: 8 }}
       />
 
       {/* Author cards (top 5) */}
-      <SimpleGrid columns={{ base: 1, sm: 2, md: 3, xl: 5 }} spacing={4} mb={8}>
+      <SimpleGrid columns={{ base: 2, sm: 3, xl: 5 }} spacing={{ base: 3, md: 4 }} mb={{ base: 4, md: 8 }}>
         {d.authors.slice(0, 5).map((author, i) => (
           <Box
             key={author.name}
@@ -78,7 +78,7 @@ export default function Authors() {
             borderWidth="1px"
             borderColor="border.default"
             borderRadius="xl"
-            p={4}
+            p={{ base: 3, md: 4 }}
             transition="all 0.2s"
             _hover={{ borderColor: 'brand.500', shadow: 'md', transform: 'translateY(-1px)' }}
           >
@@ -113,7 +113,7 @@ export default function Authors() {
       </SimpleGrid>
 
       {/* Author timeline charts */}
-      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6} mb={6}>
+      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 4, md: 6 }} mb={{ base: 4, md: 6 }}>
         <SectionCard title="Cumulative Lines of Code" description="Top 5 authors over time">
           <ChartWrapper height={240}>
             <ResponsiveContainer width="100%" height="100%">
@@ -174,138 +174,144 @@ export default function Authors() {
         </SectionCard>
       </SimpleGrid>
 
-      {/* Authors table */}
-      <SectionCard title="All Authors" description={`Showing top ${d.authors.length} by commits`} mb={6}>
-        <Box overflowX="auto">
-          <Table variant="stats" size="sm">
-            <Thead>
-              <Tr>
-                <Th>#</Th>
-                <Th>Author</Th>
-                <Th isNumeric>Commits</Th>
-                <Th isNumeric>Share</Th>
-                <Th isNumeric>+Lines</Th>
-                <Th isNumeric>−Lines</Th>
-                <Th>First Commit</Th>
-                <Th>Last Commit</Th>
-                <Th isNumeric>Active Days</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {d.authors.map((a, i) => (
-                <Tr key={a.name}>
-                  <Td>
-                    <Badge
-                      colorScheme={i < 3 ? 'yellow' : 'gray'}
-                      variant="subtle"
-                      fontSize="xs"
-                    >
-                      {a.placeByCommits}
-                    </Badge>
-                  </Td>
-                  <Td>
-                    <HStack spacing={2}>
-                      <Avatar name={a.name} size="xs" bg={CHART_COLORS[i % CHART_COLORS.length]} color="white" />
-                      <Text fontSize="sm">{a.name}</Text>
-                    </HStack>
-                  </Td>
-                  <Td isNumeric fontWeight="semibold">{a.commits.toLocaleString()}</Td>
-                  <Td isNumeric>
-                    <Badge colorScheme="purple" variant="subtle" fontSize="xs">
-                      {a.commitsFrac.toFixed(1)}%
-                    </Badge>
-                  </Td>
-                  <Td isNumeric color="green.400">+{a.linesAdded.toLocaleString()}</Td>
-                  <Td isNumeric color="red.400">-{a.linesRemoved.toLocaleString()}</Td>
-                  <Td fontSize="xs" fontFamily="mono" color="text.secondary">{a.dateFirst}</Td>
-                  <Td fontSize="xs" fontFamily="mono" color="text.secondary">{a.dateLast}</Td>
-                  <Td isNumeric>{a.activeDays}</Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </Box>
-      </SectionCard>
-
-      {/* Author of Month / Year */}
-      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
-        <SectionCard title="Author of Month" description="Most active contributor each month">
-          <Box overflowX="auto">
+      {/* Authors table — full scroll on mobile */}
+      <SectionCard title="All Authors" description={`Showing top ${d.authors.length} by commits`} mb={{ base: 4, md: 6 }}>
+        <Box overflowX="auto" WebkitOverflowScrolling="touch">
+          <Box minW="640px">
             <Table variant="stats" size="sm">
               <Thead>
                 <Tr>
-                  <Th>Month</Th>
-                  <Th>Top Author</Th>
+                  <Th>#</Th>
+                  <Th>Author</Th>
                   <Th isNumeric>Commits</Th>
-                  <Th isNumeric>Authors</Th>
+                  <Th isNumeric>Share</Th>
+                  <Th isNumeric>+Lines</Th>
+                  <Th isNumeric>−Lines</Th>
+                  <Th>First</Th>
+                  <Th>Last</Th>
+                  <Th isNumeric>Days</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {d.authorOfMonth.slice(0, 12).map(row => (
-                  <Tr key={row.period}>
-                    <Td fontFamily="mono" fontSize="xs">{row.period}</Td>
+                {d.authors.map((a, i) => (
+                  <Tr key={a.name}>
                     <Td>
-                      <HStack spacing={1.5}>
-                        <Avatar
-                          name={row.topAuthor}
-                          size="xs"
-                          bg={CHART_COLORS[TOP_AUTHORS.indexOf(row.topAuthor) % CHART_COLORS.length]}
-                          color="white"
-                        />
-                        <Text fontSize="sm" noOfLines={1}>{row.topAuthor}</Text>
+                      <Badge
+                        colorScheme={i < 3 ? 'yellow' : 'gray'}
+                        variant="subtle"
+                        fontSize="xs"
+                      >
+                        {a.placeByCommits}
+                      </Badge>
+                    </Td>
+                    <Td>
+                      <HStack spacing={2}>
+                        <Avatar name={a.name} size="xs" bg={CHART_COLORS[i % CHART_COLORS.length]} color="white" />
+                        <Text fontSize="sm" noOfLines={1} maxW="120px">{a.name}</Text>
                       </HStack>
                     </Td>
+                    <Td isNumeric fontWeight="semibold">{a.commits.toLocaleString()}</Td>
                     <Td isNumeric>
-                      <Text fontSize="xs">
-                        {row.commits}{' '}
-                        <Text as="span" color="text.muted">({row.commitsFrac.toFixed(0)}%)</Text>
-                      </Text>
+                      <Badge colorScheme="purple" variant="subtle" fontSize="xs">
+                        {a.commitsFrac.toFixed(1)}%
+                      </Badge>
                     </Td>
-                    <Td isNumeric>{row.authorCount}</Td>
+                    <Td isNumeric color="green.400">+{a.linesAdded.toLocaleString()}</Td>
+                    <Td isNumeric color="red.400">-{a.linesRemoved.toLocaleString()}</Td>
+                    <Td fontSize="xs" fontFamily="mono" color="text.secondary">{a.dateFirst}</Td>
+                    <Td fontSize="xs" fontFamily="mono" color="text.secondary">{a.dateLast}</Td>
+                    <Td isNumeric>{a.activeDays}</Td>
                   </Tr>
                 ))}
               </Tbody>
             </Table>
           </Box>
+        </Box>
+      </SectionCard>
+
+      {/* Author of Month / Year */}
+      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 4, md: 6 }}>
+        <SectionCard title="Author of Month" description="Most active contributor each month">
+          <Box overflowX="auto" WebkitOverflowScrolling="touch">
+            <Box minW="360px">
+              <Table variant="stats" size="sm">
+                <Thead>
+                  <Tr>
+                    <Th>Month</Th>
+                    <Th>Top Author</Th>
+                    <Th isNumeric>Commits</Th>
+                    <Th isNumeric>Authors</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {d.authorOfMonth.slice(0, 12).map(row => (
+                    <Tr key={row.period}>
+                      <Td fontFamily="mono" fontSize="xs">{row.period}</Td>
+                      <Td>
+                        <HStack spacing={1.5}>
+                          <Avatar
+                            name={row.topAuthor}
+                            size="xs"
+                            bg={CHART_COLORS[TOP_AUTHORS.indexOf(row.topAuthor) % CHART_COLORS.length]}
+                            color="white"
+                          />
+                          <Text fontSize="sm" noOfLines={1} maxW="80px">{row.topAuthor}</Text>
+                        </HStack>
+                      </Td>
+                      <Td isNumeric>
+                        <Text fontSize="xs">
+                          {row.commits}{' '}
+                          <Text as="span" color="text.muted">({row.commitsFrac.toFixed(0)}%)</Text>
+                        </Text>
+                      </Td>
+                      <Td isNumeric>{row.authorCount}</Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </Box>
+          </Box>
         </SectionCard>
 
         <SectionCard title="Author of Year">
-          <Box overflowX="auto">
-            <Table variant="stats" size="sm">
-              <Thead>
-                <Tr>
-                  <Th>Year</Th>
-                  <Th>Top Author</Th>
-                  <Th isNumeric>Commits</Th>
-                  <Th isNumeric>Authors</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {d.authorOfYear.map(row => (
-                  <Tr key={row.period}>
-                    <Td fontFamily="mono" fontWeight="semibold">{row.period}</Td>
-                    <Td>
-                      <HStack spacing={1.5}>
-                        <Avatar
-                          name={row.topAuthor}
-                          size="xs"
-                          bg={CHART_COLORS[TOP_AUTHORS.indexOf(row.topAuthor) % CHART_COLORS.length]}
-                          color="white"
-                        />
-                        <Text fontSize="sm" noOfLines={1}>{row.topAuthor}</Text>
-                      </HStack>
-                    </Td>
-                    <Td isNumeric>
-                      <Text fontSize="xs">
-                        {row.commits}{' '}
-                        <Text as="span" color="text.muted">({row.commitsFrac.toFixed(0)}%)</Text>
-                      </Text>
-                    </Td>
-                    <Td isNumeric>{row.authorCount}</Td>
+          <Box overflowX="auto" WebkitOverflowScrolling="touch">
+            <Box minW="360px">
+              <Table variant="stats" size="sm">
+                <Thead>
+                  <Tr>
+                    <Th>Year</Th>
+                    <Th>Top Author</Th>
+                    <Th isNumeric>Commits</Th>
+                    <Th isNumeric>Authors</Th>
                   </Tr>
-                ))}
-              </Tbody>
-            </Table>
+                </Thead>
+                <Tbody>
+                  {d.authorOfYear.map(row => (
+                    <Tr key={row.period}>
+                      <Td fontFamily="mono" fontWeight="semibold">{row.period}</Td>
+                      <Td>
+                        <HStack spacing={1.5}>
+                          <Avatar
+                            name={row.topAuthor}
+                            size="xs"
+                            bg={CHART_COLORS[TOP_AUTHORS.indexOf(row.topAuthor) % CHART_COLORS.length]}
+                            color="white"
+                          />
+                          <Text fontSize="sm" noOfLines={1} maxW="80px">{row.topAuthor}</Text>
+                        </HStack>
+                      </Td>
+                      <Td isNumeric>
+                        <Text fontSize="xs">
+                          {row.commits}{' '}
+                          <Text as="span" color="text.muted">({row.commitsFrac.toFixed(0)}%)</Text>
+                        </Text>
+                      </Td>
+                      <Td isNumeric>{row.authorCount}</Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </Box>
           </Box>
         </SectionCard>
       </SimpleGrid>

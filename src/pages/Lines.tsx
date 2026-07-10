@@ -2,7 +2,6 @@ import {
   Box,
   SimpleGrid,
   Text,
-  Flex,
   useColorModeValue,
 } from '@chakra-ui/react'
 import { LineChart as LineChartIcon, Code2, TrendingUp, TrendingDown } from 'lucide-react'
@@ -49,7 +48,6 @@ export default function Lines() {
 
   const gridLine = useColorModeValue('#e2e8f0', 'rgba(255,255,255,0.06)')
 
-  // Build monthly net change data from the last 24 months
   const netChangeData = d.commitsByYearMonth.slice(0, 24).reverse().map(r => ({
     period: r.period,
     added: r.linesAdded,
@@ -57,7 +55,6 @@ export default function Lines() {
     net: r.linesAdded - r.linesRemoved,
   }))
 
-  // Sample the LOC timeline for performance — max 200 points
   const locTimeline = d.linesTimeline.length > 200
     ? d.linesTimeline.filter((_, i) => i % Math.ceil(d.linesTimeline.length / 200) === 0)
     : d.linesTimeline
@@ -68,10 +65,10 @@ export default function Lines() {
         title="Lines of Code"
         description="Code volume growth and churn over the project lifetime"
         icon={LineChartIcon}
-        mb={8}
+        mb={{ base: 4, md: 8 }}
       />
 
-      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} mb={8}>
+      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={{ base: 3, md: 4 }} mb={{ base: 4, md: 8 }}>
         <StatCard
           label="Total Lines of Code"
           value={d.totalLOC.toLocaleString()}
@@ -95,7 +92,7 @@ export default function Lines() {
       </SimpleGrid>
 
       {/* LOC over time */}
-      <SectionCard title="Lines of Code over Time" description="Full project history" mb={6}>
+      <SectionCard title="Lines of Code over Time" description="Full project history" mb={{ base: 4, md: 6 }}>
         <ChartWrapper height={280}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={locTimeline} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
@@ -135,7 +132,7 @@ export default function Lines() {
         </ChartWrapper>
       </SectionCard>
 
-      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
+      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 4, md: 6 }}>
         {/* Net change per month */}
         <SectionCard title="Monthly Net Change" description="Lines added vs removed (last 24 months)">
           <ChartWrapper height={240}>

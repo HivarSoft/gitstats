@@ -10,11 +10,18 @@ interface PageHeaderProps extends BoxProps {
 
 export default function PageHeader({ title, description, icon, actions, ...rest }: PageHeaderProps) {
   return (
-    <Flex mb={8} align="center" justify="space-between" {...rest}>
-      <Flex align="center" gap={4}>
+    <Flex
+      mb={{ base: 4, md: 8 }}
+      align={{ base: 'flex-start', sm: 'center' }}
+      justify="space-between"
+      flexDir={{ base: 'column', sm: 'row' }}
+      gap={{ base: 3, sm: 0 }}
+      {...rest}
+    >
+      <Flex align="center" gap={{ base: 3, md: 4 }}>
         <Flex
-          w={12}
-          h={12}
+          w={{ base: 10, md: 12 }}
+          h={{ base: 10, md: 12 }}
           borderRadius="xl"
           bg="brand.500"
           align="center"
@@ -22,20 +29,20 @@ export default function PageHeader({ title, description, icon, actions, ...rest 
           flexShrink={0}
           shadow="md"
         >
-          <Icon as={icon} boxSize={6} color="white" />
+          <Icon as={icon} boxSize={{ base: 5, md: 6 }} color="white" />
         </Flex>
         <Box>
-          <Heading size="lg" fontWeight="bold" color="text.primary" lineHeight="shorter">
+          <Heading size={{ base: 'md', md: 'lg' }} fontWeight="bold" color="text.primary" lineHeight="shorter">
             {title}
           </Heading>
           {description && (
-            <Text fontSize="sm" color="text.secondary" mt={0.5}>
+            <Text fontSize={{ base: 'xs', md: 'sm' }} color="text.secondary" mt={0.5} noOfLines={2}>
               {description}
             </Text>
           )}
         </Box>
       </Flex>
-      {actions && <Box>{actions}</Box>}
+      {actions && <Box flexShrink={0}>{actions}</Box>}
     </Flex>
   )
 }

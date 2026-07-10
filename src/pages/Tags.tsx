@@ -66,10 +66,10 @@ export default function Tags() {
         title="Tags"
         description="Release history and version milestones"
         icon={Tag}
-        mb={8}
+        mb={{ base: 4, md: 8 }}
       />
 
-      <SimpleGrid columns={{ base: 2, md: 3 }} spacing={4} mb={8}>
+      <SimpleGrid columns={{ base: 2, md: 3 }} spacing={{ base: 3, md: 4 }} mb={{ base: 4, md: 8 }}>
         <StatCard
           label="Total Tags"
           value={d.tags.length}
@@ -93,7 +93,7 @@ export default function Tags() {
 
       {/* Tags chart */}
       {d.tags.length > 0 && (
-        <SectionCard title="Commits per Release" description="All tags sorted chronologically" mb={6}>
+        <SectionCard title="Commits per Release" description="All tags sorted chronologically" mb={{ base: 4, md: 6 }}>
           <ChartWrapper height={240}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -120,7 +120,7 @@ export default function Tags() {
       )}
 
       {d.tags.length === 0 && (
-        <SectionCard title="Tags" mb={6}>
+        <SectionCard title="Tags" mb={{ base: 4, md: 6 }}>
           <Text color="text.muted" fontSize="sm" textAlign="center" py={8}>
             No tags found in this repository.
           </Text>
@@ -129,61 +129,63 @@ export default function Tags() {
 
       {/* Tags table */}
       {d.tags.length > 0 && (
-        <SectionCard title="All Tags" description="Sorted by date descending" mb={6}>
-          <Box overflowX="auto">
-            <Table variant="stats" size="sm">
-              <Thead>
-                <Tr>
-                  <Th>Tag</Th>
-                  <Th>Date</Th>
-                  <Th isNumeric>Commits</Th>
-                  <Th>Top Contributors</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {d.tags.map((tag, i) => {
-                  const sortedAuthors = Object.entries(tag.authors).sort((a, b) => b[1] - a[1])
-                  return (
-                    <Tr key={tag.name}>
-                      <Td>
-                        <Badge
-                          colorScheme={i === 0 ? 'green' : 'purple'}
-                          variant={i === 0 ? 'solid' : 'subtle'}
-                          fontSize="xs"
-                          fontFamily="mono"
-                        >
-                          {tag.name}
-                        </Badge>
-                      </Td>
-                      <Td fontSize="xs" fontFamily="mono" color="text.secondary">{tag.date}</Td>
-                      <Td isNumeric fontWeight="semibold">{tag.commits}</Td>
-                      <Td>
-                        <HStack spacing={2} flexWrap="wrap">
-                          {sortedAuthors.slice(0, 3).map(([author, commits], ai) => (
-                            <HStack key={author} spacing={1}>
-                              <Avatar
-                                name={author}
-                                size="xs"
-                                bg={CHART_COLORS[ai % CHART_COLORS.length]}
-                                color="white"
-                              />
-                              <Text fontSize="xs" color="text.secondary">
-                                {author.split(' ')[0]} ({commits})
+        <SectionCard title="All Tags" description="Sorted by date descending" mb={{ base: 4, md: 6 }}>
+          <Box overflowX="auto" WebkitOverflowScrolling="touch">
+            <Box minW="440px">
+              <Table variant="stats" size="sm">
+                <Thead>
+                  <Tr>
+                    <Th>Tag</Th>
+                    <Th>Date</Th>
+                    <Th isNumeric>Commits</Th>
+                    <Th>Top Contributors</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {d.tags.map((tag, i) => {
+                    const sortedAuthors = Object.entries(tag.authors).sort((a, b) => b[1] - a[1])
+                    return (
+                      <Tr key={tag.name}>
+                        <Td>
+                          <Badge
+                            colorScheme={i === 0 ? 'green' : 'purple'}
+                            variant={i === 0 ? 'solid' : 'subtle'}
+                            fontSize="xs"
+                            fontFamily="mono"
+                          >
+                            {tag.name}
+                          </Badge>
+                        </Td>
+                        <Td fontSize="xs" fontFamily="mono" color="text.secondary">{tag.date}</Td>
+                        <Td isNumeric fontWeight="semibold">{tag.commits}</Td>
+                        <Td>
+                          <HStack spacing={2} flexWrap="wrap">
+                            {sortedAuthors.slice(0, 3).map(([author, commits], ai) => (
+                              <HStack key={author} spacing={1}>
+                                <Avatar
+                                  name={author}
+                                  size="xs"
+                                  bg={CHART_COLORS[ai % CHART_COLORS.length]}
+                                  color="white"
+                                />
+                                <Text fontSize="xs" color="text.secondary">
+                                  {author.split(' ')[0]} ({commits})
+                                </Text>
+                              </HStack>
+                            ))}
+                            {sortedAuthors.length > 3 && (
+                              <Text fontSize="10px" color="text.muted">
+                                +{sortedAuthors.length - 3} more
                               </Text>
-                            </HStack>
-                          ))}
-                          {sortedAuthors.length > 3 && (
-                            <Text fontSize="10px" color="text.muted">
-                              +{sortedAuthors.length - 3} more
-                            </Text>
-                          )}
-                        </HStack>
-                      </Td>
-                    </Tr>
-                  )
-                })}
-              </Tbody>
-            </Table>
+                            )}
+                          </HStack>
+                        </Td>
+                      </Tr>
+                    )
+                  })}
+                </Tbody>
+              </Table>
+            </Box>
           </Box>
         </SectionCard>
       )}
@@ -191,7 +193,7 @@ export default function Tags() {
       {/* Recent release cards */}
       {d.tags.length > 0 && (
         <SectionCard title="Recent Releases" description="Latest 4 tag highlights">
-          <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={4}>
+          <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={{ base: 3, md: 4 }}>
             {d.tags.slice(0, 4).map((tag, i) => {
               const topAuthors = Object.entries(tag.authors)
                 .sort((a, b) => b[1] - a[1])
@@ -207,7 +209,7 @@ export default function Tags() {
                   transition="all 0.2s"
                   _hover={{ borderColor: 'brand.500', shadow: 'sm' }}
                 >
-                  <Flex justify="space-between" align="center" mb={3}>
+                  <Flex justify="space-between" align="center" mb={3} flexWrap="wrap" gap={1}>
                     <Badge
                       colorScheme={i === 0 ? 'green' : 'purple'}
                       variant={i === 0 ? 'solid' : 'subtle'}

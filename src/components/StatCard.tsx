@@ -33,34 +33,47 @@ export default function StatCard({
       borderWidth="1px"
       borderColor="border.default"
       borderRadius="xl"
-      p={5}
+      p={{ base: 4, md: 5 }}
       transition="all 0.2s"
       _hover={{ borderColor: 'brand.500', shadow: 'md', transform: 'translateY(-1px)' }}
       {...rest}
     >
       <Flex justify="space-between" align="flex-start">
         <Stat>
-          <StatLabel fontSize="xs" fontWeight="semibold" letterSpacing="wider" textTransform="uppercase" color="text.secondary">
+          <StatLabel
+            fontSize={{ base: '9px', md: 'xs' }}
+            fontWeight="semibold"
+            letterSpacing="wider"
+            textTransform="uppercase"
+            color="text.secondary"
+            noOfLines={1}
+          >
             {label}
           </StatLabel>
-          <StatNumber fontSize="2xl" fontWeight="bold" mt={1} color="text.primary">
+          <StatNumber
+            fontSize={{ base: 'lg', md: '2xl' }}
+            fontWeight="bold"
+            mt={1}
+            color="text.primary"
+            noOfLines={1}
+          >
             {value}
           </StatNumber>
           {helpText && (
-            <StatHelpText fontSize="xs" color="text.muted" mt={1} mb={0}>
+            <StatHelpText fontSize={{ base: '10px', md: 'xs' }} color="text.muted" mt={1} mb={0} noOfLines={1}>
               {helpText}
             </StatHelpText>
           )}
         </Stat>
         <Flex
-          w={10}
-          h={10}
+          w={{ base: 8, md: 10 }}
+          h={{ base: 8, md: 10 }}
           borderRadius="lg"
           align="center"
           justify="center"
           flexShrink={0}
         >
-          <Icon as={icon} boxSize={5} color={iconColor} />
+          <Icon as={icon} boxSize={{ base: 4, md: 5 }} color={iconColor} />
         </Flex>
       </Flex>
     </Box>

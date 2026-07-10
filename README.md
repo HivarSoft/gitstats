@@ -1,4 +1,4 @@
-# GitStats Web · [hivarsoft.com](https://hivarsoft.com)
+# GitStats · [hivarsoft.com](https://hivarsoft.com)
 
 > A modern, full-stack React dashboard for **real** local Git repository analytics.  
 > Browse, select, and analyze any `.git` repo on your machine — no cloud, no upload, everything stays local.
@@ -56,7 +56,7 @@ Local .git repository
 ### Install & Run
 
 ```bash
-cd gitstats/web
+cd gitstats
 npm install
 npm run dev          # starts API (port 3001) + Vite (port 5173) together
 ```
@@ -72,7 +72,6 @@ Open **http://localhost:5173** — you'll land on the import page.
 ## 📂 Project Structure
 
 ```
-web/
 ├── server/
 │   ├── index.ts        Express API server (health, browse, validate, analyze)
 │   ├── analyzer.ts     Git analytics engine — all commit parsing logic

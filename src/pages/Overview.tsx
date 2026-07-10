@@ -62,7 +62,6 @@ export default function Overview() {
 
   const gridLine = useColorModeValue('#e2e8f0', 'rgba(255,255,255,0.06)')
 
-  // Sample LOC timeline: max 60 points for the overview chart
   const locSample = d.linesTimeline.length > 60
     ? d.linesTimeline.filter((_, i) => i % Math.ceil(d.linesTimeline.length / 60) === 0)
     : d.linesTimeline
@@ -73,11 +72,11 @@ export default function Overview() {
         title="Overview"
         description={`${d.projectName} — repository analytics`}
         icon={LayoutDashboard}
-        mb={8}
+        mb={{ base: 4, md: 8 }}
       />
 
       {/* Key stats */}
-      <SimpleGrid columns={{ base: 2, md: 3, xl: 4 }} spacing={4} mb={8}>
+      <SimpleGrid columns={{ base: 2, md: 3, xl: 4 }} spacing={{ base: 3, md: 4 }} mb={{ base: 4, md: 8 }}>
         <StatCard
           label="Total Commits"
           value={formatNumber(d.totalCommits)}
@@ -115,13 +114,13 @@ export default function Overview() {
         />
         <StatCard
           label="Project Age"
-          value={`${d.age.totalDays.toLocaleString()} days`}
+          value={`${d.age.totalDays.toLocaleString()}d`}
           helpText={`${d.reportPeriod.from.slice(0, 10)} → now`}
           icon={Clock}
           iconColor="rose.400"
         />
         <StatCard
-          label="Repository Size"
+          label="Repo Size"
           value={d.repositorySize}
           icon={TrendingUp}
           iconColor="sky.400"
@@ -129,14 +128,14 @@ export default function Overview() {
         <StatCard
           label="Commits / Day"
           value={d.avgCommitsPerDay.toFixed(2)}
-          helpText="calendar day average"
+          helpText="calendar day avg"
           icon={GitCommit}
           iconColor="orange.400"
         />
       </SimpleGrid>
 
       {/* LOC chart + project details */}
-      <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={6} mb={6}>
+      <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={{ base: 4, md: 6 }} mb={{ base: 4, md: 6 }}>
         <Box gridColumn={{ lg: 'span 2' }}>
           <SectionCard title="Lines of Code over Time" description="Commit history">
             <ChartWrapper height={240}>
@@ -189,9 +188,9 @@ export default function Overview() {
               ['Total Tags', String(d.tags.length)],
               ['Extensions', String(d.extensions.length)],
             ].map(([label, value]) => (
-              <Flex key={label} justify="space-between" align="center" py={2.5}>
-                <Text fontSize="sm" color="text.secondary">{label}</Text>
-                <Text fontSize="sm" fontWeight="semibold" color="text.primary" maxW="160px" noOfLines={1} title={value}>
+              <Flex key={label} justify="space-between" align="center" py={2.5} gap={2}>
+                <Text fontSize="sm" color="text.secondary" flexShrink={0}>{label}</Text>
+                <Text fontSize="sm" fontWeight="semibold" color="text.primary" maxW="160px" noOfLines={1} title={value} textAlign="right">
                   {value}
                 </Text>
               </Flex>
@@ -201,7 +200,7 @@ export default function Overview() {
       </SimpleGrid>
 
       {/* Top authors + recent tags */}
-      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
+      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 4, md: 6 }}>
         <SectionCard title="Top Authors" description="By commit count">
           <VStack align="stretch" spacing={2}>
             {d.authors.slice(0, 5).map((author, i) => (
@@ -220,11 +219,11 @@ export default function Overview() {
                   </Text>
                 </Flex>
                 <Box flex={1} minW={0}>
-                  <Flex justify="space-between" mb={1}>
+                  <Flex justify="space-between" mb={1} gap={2}>
                     <Text fontSize="sm" fontWeight="medium" color="text.primary" noOfLines={1}>
                       {author.name}
                     </Text>
-                    <Text fontSize="xs" color="text.muted" flexShrink={0} ml={2}>
+                    <Text fontSize="xs" color="text.muted" flexShrink={0}>
                       {author.commits.toLocaleString()} ({author.commitsFrac.toFixed(1)}%)
                     </Text>
                   </Flex>
@@ -254,7 +253,7 @@ export default function Overview() {
           ) : (
             <VStack align="stretch" spacing={2}>
               {d.tags.slice(0, 6).map(tag => (
-                <Flex key={tag.name} align="center" justify="space-between" py={1.5}>
+                <Flex key={tag.name} align="center" justify="space-between" py={1.5} flexWrap="wrap" gap={1}>
                   <HStack spacing={2}>
                     <Badge colorScheme="purple" variant="subtle" fontSize="xs">
                       {tag.name}

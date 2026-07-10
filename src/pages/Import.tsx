@@ -181,55 +181,59 @@ export default function Import() {
               Repository path
             </Text>
 
-            <HStack spacing={2}>
-              {/* Browse button */}
-              <Button
-                leftIcon={<Icon as={Search} boxSize={3.5} />}
-                size="sm"
-                variant="outline"
-                colorScheme="brand"
-                onClick={onOpen}
-                isDisabled={isLoading}
-                flexShrink={0}
-                px={3}
-              >
-                Browse
-              </Button>
-
-              {/* Path input */}
-              <Box pos="relative" flex={1}>
-                <Input
-                  value={inputPath}
-                  onChange={e => setInputPath(e.target.value)}
-                  placeholder="/Users/you/projects/my-app"
-                  fontFamily="mono"
-                  fontSize="sm"
-                  bg={inputBg}
-                  borderColor="border.default"
-                  _placeholder={{ color: 'text.muted' }}
-                  _focus={{ borderColor: 'brand.500', boxShadow: 'outline' }}
-                  onKeyDown={e => { if (e.key === 'Enter') handleAnalyze() }}
+            {/* Input row — stacks on mobile */}
+            <Flex gap={2} flexDir={{ base: 'column', sm: 'row' }} align="stretch">
+              {/* Browse + path on first row on mobile */}
+              <HStack spacing={2} flex={1}>
+                {/* Browse button */}
+                <Button
+                  leftIcon={<Icon as={Search} boxSize={3.5} />}
+                  size="sm"
+                  variant="outline"
+                  colorScheme="brand"
+                  onClick={onOpen}
                   isDisabled={isLoading}
-                  pr={inputPath ? 8 : 3}
-                />
-                {inputPath && !isLoading && (
-                  <IconButton
-                    aria-label="Clear"
-                    icon={<Icon as={X} boxSize={3} />}
-                    size="xs"
-                    variant="ghost"
-                    pos="absolute"
-                    right={1}
-                    top="50%"
-                    transform="translateY(-50%)"
-                    color="text.muted"
-                    onClick={() => setInputPath('')}
-                    zIndex={1}
-                  />
-                )}
-              </Box>
+                  flexShrink={0}
+                  px={3}
+                >
+                  Browse
+                </Button>
 
-              {/* Analyze button */}
+                {/* Path input */}
+                <Box pos="relative" flex={1}>
+                  <Input
+                    value={inputPath}
+                    onChange={e => setInputPath(e.target.value)}
+                    placeholder="/Users/you/projects/my-app"
+                    fontFamily="mono"
+                    fontSize="sm"
+                    bg={inputBg}
+                    borderColor="border.default"
+                    _placeholder={{ color: 'text.muted' }}
+                    _focus={{ borderColor: 'brand.500', boxShadow: 'outline' }}
+                    onKeyDown={e => { if (e.key === 'Enter') handleAnalyze() }}
+                    isDisabled={isLoading}
+                    pr={inputPath ? 8 : 3}
+                  />
+                  {inputPath && !isLoading && (
+                    <IconButton
+                      aria-label="Clear"
+                      icon={<Icon as={X} boxSize={3} />}
+                      size="xs"
+                      variant="ghost"
+                      pos="absolute"
+                      right={1}
+                      top="50%"
+                      transform="translateY(-50%)"
+                      color="text.muted"
+                      onClick={() => setInputPath('')}
+                      zIndex={1}
+                    />
+                  )}
+                </Box>
+              </HStack>
+
+              {/* Analyze button — full width on mobile */}
               <Button
                 onClick={handleAnalyze}
                 isLoading={isLoading}
@@ -239,10 +243,11 @@ export default function Import() {
                 px={5}
                 rightIcon={<Icon as={ArrowRight} boxSize={3.5} />}
                 flexShrink={0}
+                w={{ base: 'full', sm: 'auto' }}
               >
                 Analyze
               </Button>
-            </HStack>
+            </Flex>
 
             {/* Hint */}
             <HStack spacing={1.5} mt={2.5} flexWrap="wrap">

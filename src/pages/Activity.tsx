@@ -50,7 +50,6 @@ export default function Activity() {
   if (!d) return null
   const gridLine = useColorModeValue('#e2e8f0', 'rgba(255,255,255,0.06)')
   const cellBg = useColorModeValue('gray.50', 'surface.700')
-  const maxHourCommits = Math.max(...d.activityByHour.map(h => h.commits))
 
   function heatColor(commits: number, max: number) {
     if (!commits || !max) return 'transparent'
@@ -60,7 +59,7 @@ export default function Activity() {
 
   // Build hour-of-week matrix
   const howMatrix: Record<string, Record<number, number>> = {}
-  WEEKDAYS.forEach(d => { howMatrix[d] = {} })
+  WEEKDAYS.forEach(day => { howMatrix[day] = {} })
   d.hourOfWeek.forEach(({ weekday, hour, commits }) => {
     howMatrix[weekday][hour] = commits
   })
@@ -72,11 +71,15 @@ export default function Activity() {
         title="Activity"
         description="Commit patterns across time dimensions"
         icon={ActivityIcon}
-        mb={8}
+        mb={{ base: 4, md: 8 }}
       />
 
       {/* Weekly activity bar */}
-      <SectionCard title="Weekly Activity" description={`Last 32 weeks (ending ${d.reportPeriod.to.slice(0,10)})`} mb={6}>
+      <SectionCard
+        title="Weekly Activity"
+        description={`Last 32 weeks (ending ${d.reportPeriod.to.slice(0, 10)})`}
+        mb={{ base: 4, md: 6 }}
+      >
         <ChartWrapper height={200}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={d.weeklyActivity} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
@@ -90,7 +93,7 @@ export default function Activity() {
         </ChartWrapper>
       </SectionCard>
 
-      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6} mb={6}>
+      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 4, md: 6 }} mb={{ base: 4, md: 6 }}>
         {/* Hour of Day */}
         <SectionCard title="Hour of Day" description="When commits happen most">
           <ChartWrapper height={200}>
@@ -139,7 +142,7 @@ export default function Activity() {
         </SectionCard>
       </SimpleGrid>
 
-      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6} mb={6}>
+      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 4, md: 6 }} mb={{ base: 4, md: 6 }}>
         {/* Month of Year */}
         <SectionCard title="Month of Year" description="Seasonal commit patterns">
           <ChartWrapper height={200}>
@@ -171,46 +174,47 @@ export default function Activity() {
         </SectionCard>
       </SimpleGrid>
 
-      {/* Hour of Week heatmap */}
-      <SectionCard title="Hour of Week" description="7 × 24 commit heatmap" mb={6}>
-        <Box overflowX="auto">
-          <Table size="sm" sx={{ 'td, th': { p: 1, textAlign: 'center', fontSize: '11px' } }}>
-            <Thead>
-              <Tr>
-                <Th w="52px" />
-                {Array.from({ length: 24 }, (_, h) => (
-                  <Th key={h} textAlign="center" color="text.muted" fontWeight="normal">{h}</Th>
-                ))}
-              </Tr>
-            </Thead>
-            <Tbody>
-              {WEEKDAYS.map(day => (
-                <Tr key={day}>
-                  <Td fontWeight="semibold" color="text.secondary" textAlign="left" pl={2}>{day}</Td>
-                  {Array.from({ length: 24 }, (_, h) => {
-                    const commits = howMatrix[day]?.[h] ?? 0
-                    return (
-                      <Tooltip key={h} label={`${day} ${h}:00 — ${commits} commits`} hasArrow placement="top">
-                        <Td
-                          bg={heatColor(commits, maxHoW)}
-                          borderRadius="sm"
-                          cursor={commits ? 'default' : 'default'}
-                          _hover={commits ? { opacity: 0.85 } : {}}
-                          transition="opacity 0.15s"
-                        >
-                          {commits > 0 ? commits : ''}
-                        </Td>
-                      </Tooltip>
-                    )
-                  })}
+      {/* Hour of Week heatmap — horizontally scrollable on mobile */}
+      <SectionCard title="Hour of Week" description="7 × 24 commit heatmap" mb={{ base: 4, md: 6 }}>
+        <Box overflowX="auto" WebkitOverflowScrolling="touch">
+          <Box minW="600px">
+            <Table size="sm" sx={{ 'td, th': { p: 1, textAlign: 'center', fontSize: '11px' } }}>
+              <Thead>
+                <Tr>
+                  <Th w="52px" />
+                  {Array.from({ length: 24 }, (_, h) => (
+                    <Th key={h} textAlign="center" color="text.muted" fontWeight="normal">{h}</Th>
+                  ))}
                 </Tr>
-              ))}
-            </Tbody>
-          </Table>
+              </Thead>
+              <Tbody>
+                {WEEKDAYS.map(day => (
+                  <Tr key={day}>
+                    <Td fontWeight="semibold" color="text.secondary" textAlign="left" pl={2}>{day}</Td>
+                    {Array.from({ length: 24 }, (_, h) => {
+                      const commits = howMatrix[day]?.[h] ?? 0
+                      return (
+                        <Tooltip key={h} label={`${day} ${h}:00 — ${commits} commits`} hasArrow placement="top">
+                          <Td
+                            bg={heatColor(commits, maxHoW)}
+                            borderRadius="sm"
+                            _hover={commits ? { opacity: 0.85 } : {}}
+                            transition="opacity 0.15s"
+                          >
+                            {commits > 0 ? commits : ''}
+                          </Td>
+                        </Tooltip>
+                      )
+                    })}
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </Box>
         </Box>
       </SectionCard>
 
-      {/* Commits by Year/Month */}
+      {/* Commits by Year / Month */}
       <SectionCard title="Commits by Year / Month">
         <ChartWrapper height={220}>
           <ResponsiveContainer width="100%" height="100%">
@@ -226,27 +230,29 @@ export default function Activity() {
             </LineChart>
           </ResponsiveContainer>
         </ChartWrapper>
-        <Box overflowX="auto" mt={4}>
-          <Table variant="stats" size="sm">
-            <Thead>
-              <Tr>
-                <Th>Month</Th>
-                <Th isNumeric>Commits</Th>
-                <Th isNumeric>Lines Added</Th>
-                <Th isNumeric>Lines Removed</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {d.commitsByYearMonth.slice(0, 12).map(r => (
-                <Tr key={r.period}>
-                  <Td fontFamily="mono" fontSize="xs">{r.period}</Td>
-                  <Td isNumeric>{r.commits}</Td>
-                  <Td isNumeric color="green.400">+{r.linesAdded.toLocaleString()}</Td>
-                  <Td isNumeric color="red.400">-{r.linesRemoved.toLocaleString()}</Td>
+        <Box overflowX="auto" mt={4} WebkitOverflowScrolling="touch">
+          <Box minW="400px">
+            <Table variant="stats" size="sm">
+              <Thead>
+                <Tr>
+                  <Th>Month</Th>
+                  <Th isNumeric>Commits</Th>
+                  <Th isNumeric>Lines Added</Th>
+                  <Th isNumeric>Lines Removed</Th>
                 </Tr>
-              ))}
-            </Tbody>
-          </Table>
+              </Thead>
+              <Tbody>
+                {d.commitsByYearMonth.slice(0, 12).map(r => (
+                  <Tr key={r.period}>
+                    <Td fontFamily="mono" fontSize="xs">{r.period}</Td>
+                    <Td isNumeric>{r.commits}</Td>
+                    <Td isNumeric color="green.400">+{r.linesAdded.toLocaleString()}</Td>
+                    <Td isNumeric color="red.400">-{r.linesRemoved.toLocaleString()}</Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </Box>
         </Box>
       </SectionCard>
     </Box>

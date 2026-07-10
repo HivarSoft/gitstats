@@ -19,13 +19,15 @@ export default function SectionCard({ title, description, actions, children, ...
       {...rest}
     >
       <Flex
-        px={6}
-        py={4}
+        px={{ base: 4, md: 6 }}
+        py={{ base: 3, md: 4 }}
         borderBottomWidth="1px"
         borderColor="border.default"
         justify="space-between"
         align="center"
         bg="bg.subtle"
+        flexWrap="wrap"
+        gap={2}
       >
         <Box>
           <Heading size="sm" fontWeight="semibold" color="text.primary">
@@ -37,9 +39,9 @@ export default function SectionCard({ title, description, actions, children, ...
             </Text>
           )}
         </Box>
-        {actions && <Box>{actions}</Box>}
+        {actions && <Box flexShrink={0}>{actions}</Box>}
       </Flex>
-      <Box p={6}>{children}</Box>
+      <Box p={{ base: 4, md: 6 }}>{children}</Box>
     </Box>
   )
 }
