@@ -33,8 +33,20 @@ function isoWeek(date: Date): number {
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
-export async function analyze(repoPath: string): Promise<GitStatsReport> {
+export async function analyze(repoPath: string, branch = 'HEAD'): Promise<GitStatsReport> {
   const gitDir = resolveGitDir(repoPath)
+
+  // Validate branch ref exists (skip check for default HEAD)
+  if (branch !== 'HEAD') {
+    try {
+      gitPlumbing(gitDir, ['rev-parse', '--verify', branch])
+    } catch {
+      throw new Error(`Branch "${branch}" not found in this repository.`)
+    }
+  }
+
+  // Use the resolved branch ref for all git commands
+  const ref = branch
 
   // Project name: strip trailing .git
   const rawName = path.basename(
@@ -55,7 +67,7 @@ export async function analyze(repoPath: string): Promise<GitStatsReport> {
     '--pretty=format:COMMIT:%at|%aN|%aE|%ai',
     '--shortstat',
     '--no-merges',
-    'HEAD',
+    ref,
   ])
 
   // ── Step 2: Parse log ────────────────────────────────────────────────────────
@@ -349,10 +361,10 @@ export async function analyze(repoPath: string): Promise<GitStatsReport> {
   const tags = parseTags(gitDir)
 
   // ── Step 15: File extensions ──────────────────────────────────────────────────
-  const { extensions, totalFiles, totalSize } = parseExtensions(gitDir)
+  const { extensions, totalFiles, totalSize } = parseExtensions(gitDir, ref)
 
   // ── Step 16: Files timeline (sampled, one per month) ─────────────────────────
-  const filesTimeline = parseFilesTimeline(gitDir)
+  const filesTimeline = parseFilesTimeline(gitDir, ref)
 
   // ── Step 17: LOC current state ────────────────────────────────────────────────
   const totalLOC = Math.max(0, runningLOC)
@@ -466,7 +478,7 @@ function parseTags(gitDir: string): Tag[] {
 }
 
 // ─── Extensions ────────────────────────────────────────────────────────────────
-function parseExtensions(gitDir: string): {
+function parseExtensions(gitDir: string, ref = 'HEAD'): {
   extensions: Extension[]
   totalFiles: number
   totalSize: number
@@ -478,7 +490,7 @@ function parseExtensions(gitDir: string): {
   try {
     // Standard format: <mode> SP <type> SP <hash> SP <size> TAB <path>
     // e.g. 100644 blob abc123 1234\tpath/to/file
-    const lsLines = lines(gitDir, ['ls-tree', '-r', '-l', 'HEAD'])
+    const lsLines = lines(gitDir, ['ls-tree', '-r', '-l', ref])
     for (const line of lsLines) {
       if (!line.trim()) continue
       // Split on tab to separate metadata from path
@@ -541,12 +553,12 @@ function parseExtensions(gitDir: string): {
 }
 
 // ─── Files timeline ─────────────────────────────────────────────────────────────
-function parseFilesTimeline(gitDir: string): FilesTimelinePoint[] {
+function parseFilesTimeline(gitDir: string, ref = 'HEAD'): FilesTimelinePoint[] {
   const result: FilesTimelinePoint[] = []
   try {
     // Get one commit hash per month from the mainline history
     const logLines = lines(gitDir, [
-      'log', '--first-parent', '--pretty=format:%at %H', 'HEAD',
+      'log', '--first-parent', '--pretty=format:%at %H', ref,
     ])
 
     const monthMap: Record<string, { date: string; hash: string }> = {}

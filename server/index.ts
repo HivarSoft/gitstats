@@ -7,7 +7,7 @@ import path from 'path'
 import fs from 'fs'
 import { fileURLToPath } from 'url'
 import { analyze } from './analyzer.js'
-import { resolveGitDir } from './git.js'
+import { resolveGitDir, listBranches } from './git.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -68,6 +68,19 @@ app.post('/api/browse', (req, res) => {
   }
 })
 
+// ─── List branches ────────────────────────────────────────────────────────────
+app.post('/api/branches', (req, res) => {
+  const { repoPath } = req.body as { repoPath?: string }
+  if (!repoPath) return res.status(400).json({ error: 'repoPath is required' })
+  try {
+    const gitDir = resolveGitDir(repoPath)
+    const result = listBranches(gitDir)
+    return res.json(result)
+  } catch (err: any) {
+    return res.status(400).json({ error: err.message })
+  }
+})
+
 // ─── Validate a repo path before full analysis ────────────────────────────────
 app.post('/api/validate', (req, res) => {
   const { repoPath } = req.body as { repoPath?: string }
@@ -87,7 +100,7 @@ app.post('/api/validate', (req, res) => {
 
 // ─── Full analysis ────────────────────────────────────────────────────────────
 app.post('/api/analyze', async (req, res) => {
-  const { repoPath } = req.body as { repoPath?: string }
+  const { repoPath, branch } = req.body as { repoPath?: string; branch?: string }
   if (!repoPath) {
     return res.status(400).json({ error: 'repoPath is required' })
   }
@@ -99,9 +112,9 @@ app.post('/api/analyze', async (req, res) => {
   }
 
   try {
-    console.log(`[analyze] Starting: ${abs}`)
+    console.log(`[analyze] Starting: ${abs}${branch ? ` (branch: ${branch})` : ''}`)
     const t0 = Date.now()
-    const report = await analyze(abs)
+    const report = await analyze(abs, branch)
     const elapsed = ((Date.now() - t0) / 1000).toFixed(2)
     console.log(`[analyze] Done in ${elapsed}s — ${report.totalCommits} commits`)
     return res.json({ report, elapsed: parseFloat(elapsed) })
