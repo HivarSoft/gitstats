@@ -28,7 +28,7 @@ import {
   ChevronDown,
   Check,
 } from 'lucide-react'
-import { useState, useCallback } from 'react'
+import { useCallback } from 'react'
 import { useReport } from '@/store/reportStore'
 import { api } from '@/api/client'
 
@@ -92,32 +92,36 @@ function NavItem({
 function BranchSelector() {
   const { state, dispatch } = useReport()
   const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
 
   const borderColor = useColorModeValue('gray.200', 'whiteAlpha.150')
   const menuBg = useColorModeValue('white', 'surface.800')
   const hoverBg = useColorModeValue('gray.50', 'whiteAlpha.80')
 
+  const isSwitching = state.status === 'switching'
+
   const handleSelect = useCallback(async (branch: string) => {
-    if (branch === state.branch || !state.repoPath) return
-    dispatch({ type: 'SET_BRANCH', payload: branch })
-    setLoading(true)
+    // Normalise: treat empty string and the first branch as equivalent
+    const activeBranch = state.branch || (state.branches[0] ?? '')
+    if (branch === activeBranch || !state.repoPath || isSwitching) return
+
+    // Dispatch START_SWITCH — keeps old report in store, just marks status
+    dispatch({ type: 'START_SWITCH', payload: { branch } })
+
     try {
-      dispatch({ type: 'START_ANALYZE', payload: { projectName: state.projectName } })
       const { report, elapsed } = await api.analyze(state.repoPath, branch)
       dispatch({ type: 'DONE', payload: { report, elapsed } })
       navigate('/')
     } catch (err: any) {
-      dispatch({ type: 'ERROR', payload: err.message ?? 'Analysis failed' })
-    } finally {
-      setLoading(false)
+      // Revert branch label on failure
+      dispatch({ type: 'SET_BRANCH', payload: activeBranch })
+      dispatch({ type: 'ERROR', payload: err.message ?? 'Branch switch failed' })
     }
-  }, [state.branch, state.repoPath, state.projectName, dispatch, navigate])
+  }, [state.branch, state.branches, state.repoPath, isSwitching, dispatch, navigate])
 
-  // Only show when we have a loaded report with multiple branches
+  // Only show when a report is loaded and there are branches to choose from
   if (!state.report || state.branches.length === 0) return null
 
-  const displayBranch = state.branch || 'HEAD'
+  const activeBranch = state.branch || (state.branches[0] ?? 'HEAD')
 
   return (
     <Box px={3} pb={3}>
@@ -138,26 +142,26 @@ function BranchSelector() {
           w="full"
           size="sm"
           variant="outline"
-          borderColor={borderColor}
+          borderColor={isSwitching ? 'brand.500' : borderColor}
           bg="bg.subtle"
           _hover={{ borderColor: 'brand.500', bg: 'bg.subtle' }}
           _active={{ bg: 'bg.subtle' }}
           rightIcon={
-            loading
+            isSwitching
               ? <Spinner size="xs" color="brand.400" />
               : <Icon as={ChevronDown} boxSize={3} />
           }
-          leftIcon={<Icon as={GitBranch} boxSize={3} color="brand.400" />}
+          leftIcon={<Icon as={GitBranch} boxSize={3} color={isSwitching ? 'brand.400' : 'brand.300'} />}
           fontSize="xs"
           fontFamily="mono"
           fontWeight="medium"
           justifyContent="flex-start"
           overflow="hidden"
-          isDisabled={loading}
+          isDisabled={isSwitching}
           aria-label="Select branch"
         >
           <Text noOfLines={1} flex={1} textAlign="left">
-            {displayBranch}
+            {activeBranch}
           </Text>
         </MenuButton>
         <MenuList
@@ -170,23 +174,28 @@ function BranchSelector() {
           overflowY="auto"
           zIndex={100}
         >
-          {state.branches.map(b => (
-            <MenuItem
-              key={b}
-              onClick={() => handleSelect(b)}
-              bg="transparent"
-              _hover={{ bg: hoverBg }}
-              fontSize="xs"
-              fontFamily="mono"
-              icon={
-                b === (state.branch || state.branches[0])
-                  ? <Icon as={Check} boxSize={3} color="brand.400" />
-                  : <Box w={3} />
-              }
-            >
-              <Text noOfLines={1}>{b}</Text>
-            </MenuItem>
-          ))}
+          {state.branches.map(b => {
+            const isActive = b === activeBranch
+            return (
+              <MenuItem
+                key={b}
+                onClick={() => handleSelect(b)}
+                bg={isActive ? 'bg.subtle' : 'transparent'}
+                _hover={{ bg: hoverBg }}
+                fontSize="xs"
+                fontFamily="mono"
+                icon={
+                  isActive
+                    ? <Icon as={Check} boxSize={3} color="brand.400" />
+                    : <Box w={3} />
+                }
+              >
+                <Text noOfLines={1} fontWeight={isActive ? 'semibold' : 'normal'}>
+                  {b}
+                </Text>
+              </MenuItem>
+            )
+          })}
         </MenuList>
       </Menu>
     </Box>

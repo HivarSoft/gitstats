@@ -7,7 +7,7 @@ import type { GitStatsReport } from '@/types'
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
-export type AnalysisStatus = 'idle' | 'validating' | 'analyzing' | 'done' | 'error'
+export type AnalysisStatus = 'idle' | 'validating' | 'analyzing' | 'switching' | 'done' | 'error'
 
 export interface ReportState {
   status: AnalysisStatus
@@ -41,6 +41,7 @@ export type Action =
   | { type: 'SET_BRANCH'; payload: string }
   | { type: 'START_VALIDATE' }
   | { type: 'START_ANALYZE'; payload: { projectName: string } }
+  | { type: 'START_SWITCH'; payload: { branch: string } }
   | { type: 'DONE'; payload: { report: GitStatsReport; elapsed: number } }
   | { type: 'ERROR'; payload: string }
   | { type: 'RESET' }
@@ -61,6 +62,9 @@ function reducer(state: ReportState, action: Action): ReportState {
       return { ...state, status: 'validating', error: null }
     case 'START_ANALYZE':
       return { ...state, status: 'analyzing', projectName: action.payload.projectName, error: null }
+    case 'START_SWITCH':
+      // Keep the old report visible — just mark we're switching and update branch label
+      return { ...state, status: 'switching', branch: action.payload.branch, error: null }
     case 'DONE':
       return {
         ...state,
@@ -70,7 +74,12 @@ function reducer(state: ReportState, action: Action): ReportState {
         error: null,
       }
     case 'ERROR':
-      return { ...state, status: 'error', error: action.payload }
+      // On switch error, revert status to 'done' so the old report stays visible
+      return {
+        ...state,
+        status: state.report ? 'done' : 'error',
+        error: action.payload,
+      }
     case 'RESET':
       return initialState
     default:

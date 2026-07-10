@@ -1,5 +1,7 @@
 /**
  * Convenience hook — returns the current report, redirecting to /import if none loaded.
+ * During a branch switch the old report stays in place (status = 'switching'),
+ * so we only redirect when there is genuinely no report at all.
  */
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -11,11 +13,12 @@ export function useReportData(): GitStatsReport {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (state.status !== 'done' || !state.report) {
+    // Only redirect when there is no report loaded at all.
+    // 'switching' means a branch re-analysis is in progress — keep showing the old report.
+    if (!state.report && state.status !== 'switching') {
       navigate('/import', { replace: true })
     }
   }, [state.status, state.report, navigate])
 
-  // Return empty shell while redirecting
   return state.report!
 }
