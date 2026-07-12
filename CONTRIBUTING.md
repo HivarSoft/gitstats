@@ -1,6 +1,6 @@
 # Contributing to GitStats Web
 
-> Project by [HivarSoft](https://hivarsoft.com) · [github.com/HivarSoft/gitstats](https://github.com/HivarSoft/gitstats)
+> Project by [HivarSoft](https://hivarsoft.com)
 
 Thank you for your interest in contributing! This document explains how to get involved.
 

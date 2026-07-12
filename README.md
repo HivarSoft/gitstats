@@ -144,4 +144,4 @@ MIT © [HivarSoft](https://hivarsoft.com)
 
 ---
 
-Made by [@HivarSoft](https://github.com/HivarSoft) · [hivarsoft.com](https://hivarsoft.com) · [GitHub Repo](https://github.com/HivarSoft/gitstats)
+Made by [@HivarSoft](https://github.com/HivarSoft) · [hivarsoft.com](https://hivarsoft.com) · [GitHub Repo]
