@@ -13,7 +13,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const PORT = parseInt(process.env.PORT ?? '3001')
 
-app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:4173', 'http://localhost:3000'] }))
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:4173',
+    'http://localhost:3000',
+    'https://gitstats.hivarsoft.com',
+    // also allow any *.vercel.app preview deployments
+    /\.vercel\.app$/,
+  ],
+}))
 app.use(express.json({ limit: '1mb' }))
 
 // ─── Health check ─────────────────────────────────────────────────────────────

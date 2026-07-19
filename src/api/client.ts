@@ -1,6 +1,8 @@
 import type { GitStatsReport } from '@/types'
 
-const BASE = '/api'
+// In dev, Vite proxies /api → localhost:3001.
+// In production (Vercel), VITE_API_URL is set to the Railway backend URL.
+const BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '') + '/api'
 
 export interface AnalyzeResponse {
   report: GitStatsReport
